@@ -54,6 +54,7 @@ import org.springframework.core.io.Resource;
 @SuppressWarnings({"serial", "all"})
 public class XmlBeanFactory extends DefaultListableBeanFactory {
 
+	//在实例化BeanDefinitionReader的时候会将beanDefinitionRegistry传入，默认使用继承自DefaultListableBeanFactory的子类
 	private final XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(this);
 
 

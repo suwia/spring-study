@@ -77,15 +77,28 @@ public class DelegatingEntityResolver implements EntityResolver {
 	}
 
 
+	/**
+	 * @Author sirc_hzr
+	 * @Description  TODO 我们可以看到，对不同的验证模式， Spring 使用了不同的解析器解析。
+	 * 这里简单描述原理，比如加载 DTD 类型的 BeansDtdResolver 的 resolveEntity 是直接截取 systemld 最后的 xx.dtd
+	 * 然后去当前路径下寻找，而力 xsd 类型的 PluggableSchemaResolver 类的 resolveEntity 是默认到 META-INF/Spring.schemas 文件中找到
+	 * systemid 所对应的 XSD 文件并加载
+	 * @Date 10:40 2019/3/18
+	 * @Param [publicId, systemId]
+	 * @return org.xml.sax.InputSource
+	 **/
+
 	@Override
 	@Nullable
 	public InputSource resolveEntity(@Nullable String publicId, @Nullable String systemId)
 			throws SAXException, IOException {
 
 		if (systemId != null) {
+			//如果是dtd从这里解析
 			if (systemId.endsWith(DTD_SUFFIX)) {
 				return this.dtdResolver.resolveEntity(publicId, systemId);
 			}
+			//通过调用 META-INF/Spring.schemas 解析
 			else if (systemId.endsWith(XSD_SUFFIX)) {
 				return this.schemaResolver.resolveEntity(publicId, systemId);
 			}

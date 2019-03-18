@@ -62,12 +62,17 @@ public class DefaultDocumentLoader implements DocumentLoader {
 
 
 	/**
+	 * Annotation：HZR
+	 * 1、同样首先创建 DocumentBuilderFactory
+	 * 2、再通过DocumentBuilderFactory创建DocumentBuilder
+	 * 3、最后解析 inputSource 来返回 Document 对象
 	 * Load the {@link Document} at the supplied {@link InputSource} using the standard JAXP-configured
 	 * XML parser.
 	 */
 	@Override
 	public Document loadDocument(InputSource inputSource, EntityResolver entityResolver,
 			ErrorHandler errorHandler, int validationMode, boolean namespaceAware) throws Exception {
+
 
 		DocumentBuilderFactory factory = createDocumentBuilderFactory(validationMode, namespaceAware);
 		if (logger.isTraceEnabled()) {
