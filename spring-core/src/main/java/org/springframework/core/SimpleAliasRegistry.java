@@ -47,11 +47,21 @@ public class SimpleAliasRegistry implements AliasRegistry {
 	private final Map<String, String> aliasMap = new ConcurrentHashMap<>(16);
 
 
+	/*
+	* Annotation: HZR
+	* 注册alias的步骤如下
+	* 1、alias与beanName相同的情况处理。若alias与beanName的名称相同则不需要处理并删除原有的alias
+	* 2、alias覆盖处理。若aliasName已经使用并已经指向另一个beanName则需要用户设置并进行处理。
+	* 3、alias循环检查。当A->B存在时，若造次出现A->C->B时则会抛出异常。
+	* 4、注册alias
+	*
+	* */
 	@Override
 	public void registerAlias(String name, String alias) {
 		Assert.hasText(name, "'name' must not be empty");
 		Assert.hasText(alias, "'alias' must not be empty");
 		synchronized (this.aliasMap) {
+			//alias与beanName相同的情况下不记录alias，并删除原有的alias
 			if (alias.equals(name)) {
 				this.aliasMap.remove(alias);
 				if (logger.isDebugEnabled()) {
@@ -60,11 +70,14 @@ public class SimpleAliasRegistry implements AliasRegistry {
 			}
 			else {
 				String registeredName = this.aliasMap.get(alias);
+
 				if (registeredName != null) {
+					//alias指向的beanName相同就不重复的注册别名
 					if (registeredName.equals(name)) {
 						// An existing alias - no need to re-register
 						return;
 					}
+					//如果alias不允许被覆盖则抛出异常
 					if (!allowAliasOverriding()) {
 						throw new IllegalStateException("Cannot define alias '" + alias + "' for name '" +
 								name + "': It is already registered for name '" + registeredName + "'.");
@@ -74,6 +87,7 @@ public class SimpleAliasRegistry implements AliasRegistry {
 								registeredName + "' with new target name '" + name + "'");
 					}
 				}
+				//alias循环检查。当A->B存在时，若造次出现A->C->B时则会抛出异常
 				checkForAliasCircle(name, alias);
 				this.aliasMap.put(alias, name);
 				if (logger.isTraceEnabled()) {

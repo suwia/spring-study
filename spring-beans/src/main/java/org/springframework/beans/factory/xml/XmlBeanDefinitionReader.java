@@ -549,7 +549,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 		//此处使用的是DefaultBeanDefinitionDocumentReader实例化出来的对象
 		BeanDefinitionDocumentReader documentReader = createBeanDefinitionDocumentReader();
 
-		//在实例化BeanDefinitionReader的时候会将beanDefinitionRegistry传入，默认使用继承自DefaultListableBeanFactory的子类
+		//在实例化BeanDefinitionReader的时候会将beanDefinitionRegistry传入，默认使用继承自DefaultListableBeanFactory的子类(XmlBeanDefinitionReader)
 
 
 		//记录统计前BeanDefinition的加载个数

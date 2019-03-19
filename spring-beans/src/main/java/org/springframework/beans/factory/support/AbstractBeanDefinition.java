@@ -66,6 +66,8 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 
 	/**
 	 * Constant that indicates no autowiring at all.
+	 * Annotation: HZR
+	 * 不使用自动装配
 	 * @see #setAutowireMode
 	 */
 	public static final int AUTOWIRE_NO = AutowireCapableBeanFactory.AUTOWIRE_NO;
@@ -140,65 +142,176 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	@Nullable
 	private volatile Object beanClass;
 
+	/*
+	 * Annotation: HZR
+	 * bean 的作用范围 对应 bean 属性scope
+     */
 	@Nullable
 	private String scope = SCOPE_DEFAULT;
 
+	/*
+	 * Annotation: HZR
+	 * 是否是抽象 对应 bean 属性 abstract
+	 */
 	private boolean abstractFlag = false;
 
+	/*
+	 * Annotation: HZR
+	 * 是否延迟加载 对应 bean 属性 lazy-init
+	 */
 	private boolean lazyInit = false;
 
+	/*
+	 * Annotation: HZR
+	 * 自动注入模式 对应 bean 属性 autowire
+	 */
 	private int autowireMode = AUTOWIRE_NO;
 
+	/*
+	 * Annotation: HZR
+	 * 依赖检查，spring3.0之后弃用这个属性
+	 */
 	private int dependencyCheck = DEPENDENCY_CHECK_NONE;
 
+	/*
+	 * Annotation: HZR
+	 * 用来表示一个bean的实例化依靠另一个bean先实例化 对应 bean 属性 depend-on
+	 */
 	@Nullable
 	private String[] dependsOn;
 
+	/*
+	 * Annotation: HZR
+	 * aucowire-candidate 属性设置为 false ．这样容器在查找自动装配对象时
+	 * 将不考虑该bean，即它不会被考虑作为其他bean自动装配的候选者，但是该bean本身还是可以使用自动装配来注入其他bean的
+	 * 对应 bean 属性 autowire-candidate
+	 */
 	private boolean autowireCandidate = true;
 
+	/*
+	 * Annotation: HZR
+	 * 自动装配时当出现多个bean候选者时，将会作为首选者 对应 bean 属性 primary
+	 */
 	private boolean primary = false;
 
+	/*
+	 * Annotation: HZR
+	 * 用来记录Qualifier 对应 bean 子元素 qualifier
+	 */
 	private final Map<String, AutowireCandidateQualifier> qualifiers = new LinkedHashMap<>();
 
 	@Nullable
 	private Supplier<?> instanceSupplier;
 
+
+	/*
+	 * Annotation: HZR
+	 * 允许访问非公开的构造器和方法 程序设置
+	 */
 	private boolean nonPublicAccessAllowed = true;
 
+	/*
+	 * Annotation: HZR
+	 * 是否以一种宽松的模式来解析构造函数，默认是true
+	 * 如果为false则存在如下情况
+	 * interface ITest{}
+	 * class ITestImpl implements ITest{}
+	 * class Main{
+	 * 		Main(ITest i){}
+	 * 		Main(ITestImpl i){}
+	 * }
+	 * 抛出异常，因为spring无法准确定位那个构造函数
+	 * 程序设置
+	 */
 	private boolean lenientConstructorResolution = true;
 
+	/*
+	 * Annotation: HZR
+	 * 对应 bean 属性 factory-bean, 用法：
+	 * <bean id="instanceFactoryBean" class="example.chapter3.InstanceFact ryBean" />
+	 * <bean id="currentTime" factory-bean="instanceFactoryBean" factory-method="createTime"/>
+	 */
 	@Nullable
 	private String factoryBeanName;
 
+	/*
+	 * Annotation: HZR
+	 * 对应 bean 属性 factory-method
+	 */
 	@Nullable
 	private String factoryMethodName;
 
+	/*
+	 * Annotation: HZR
+	 * 用来记录构造函数注入的属性 对应 bean 子元素 constructor-arg
+	 */
 	@Nullable
 	private ConstructorArgumentValues constructorArgumentValues;
 
+	/*
+	 * Annotation: HZR
+	 * 普通属性集合
+	 */
 	@Nullable
 	private MutablePropertyValues propertyValues;
 
+	/*
+	 * Annotation: HZR
+	 * 方法重写，替换的集合，对应bean的子元素 lookup-method 和 replaced-method
+	 */
 	@Nullable
 	private MethodOverrides methodOverrides;
 
+	/*
+	 * Annotation: HZR
+	 * 初始化方法，对应 bean 属性 init-method
+	 */
 	@Nullable
 	private String initMethodName;
 
+	/*
+	 * Annotation: HZR
+	 * 销毁方法，对应 bean 属性 destroy-method
+	 */
 	@Nullable
 	private String destroyMethodName;
 
+	/*
+	 * Annotation: HZR
+	 * 是否执行初始化方法，程序设置
+	 */
 	private boolean enforceInitMethod = true;
 
+	/*
+	 * Annotation: HZR
+	 * 是否执行销毁方法，程序设置
+	 */
 	private boolean enforceDestroyMethod = true;
 
+	/*
+	 * Annotation: HZR
+	 * 是否是用户定义的，而不是应用程序本身定义的，创建 AOP 时候为true ，程序设置
+	 */
 	private boolean synthetic = false;
 
+	/*
+	 * Annotation: HZR
+	 * 定义这个 bean 的应用 , APPLICATION:用户；INFRASTRUCTURE:完全内部使用,与用户无关；SUPPORT: 某些复杂配置的一部分
+	 * 程序设置
+	 */
 	private int role = BeanDefinition.ROLE_APPLICATION;
 
+	/*
+	 * Annotation: HZR
+	 * bean的描述信息
+	 */
 	@Nullable
 	private String description;
 
+	/*
+	 * Annotation: HZR
+	 * 这个bean定义的资源
+	 */
 	@Nullable
 	private Resource resource;
 

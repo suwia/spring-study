@@ -186,11 +186,11 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 				if (node instanceof Element) {
 					Element ele = (Element) node;
 					if (delegate.isDefaultNamespace(ele)) {
-						//使用默认命名空间的解析方式
+						//使用默认命名空间的解析方式(针对Bean的形式)
 						parseDefaultElement(ele, delegate);
 					}
 					else {
-						//使用自定义命名空间的解析方式
+						//使用自定义命名空间的解析方式(针对Bean的形式)
 						delegate.parseCustomElement(ele);
 					}
 				}
@@ -299,10 +299,14 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 	}
 
 	/**
-	 * Process the given alias element, registering the alias with the registry.
+	 * Annotation: HZR
+	 * alias标签解析
+	 *  Process the given alias element, registering the alias with the registry.
 	 */
 	protected void processAliasRegistration(Element ele) {
+		//获取beanName
 		String name = ele.getAttribute(NAME_ATTRIBUTE);
+		//获取alias
 		String alias = ele.getAttribute(ALIAS_ATTRIBUTE);
 		boolean valid = true;
 		if (!StringUtils.hasText(name)) {
@@ -315,12 +319,14 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 		}
 		if (valid) {
 			try {
+				//注册alias(org.springframework.core.SimpleAliasRegistry.registerAlias方法)
 				getReaderContext().getRegistry().registerAlias(name, alias);
 			}
 			catch (Exception ex) {
 				getReaderContext().error("Failed to register alias '" + alias +
 						"' for bean with name '" + name + "'", ele, ex);
 			}
+			//别名注册后通知监听器做相应的处理
 			getReaderContext().fireAliasRegistered(name, alias, extractSource(ele));
 		}
 	}

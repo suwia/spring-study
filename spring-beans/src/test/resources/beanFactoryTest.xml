@@ -1,9 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+<spring:beans xmlns="http://www.springframework.org/schema/beans"
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			  xmlns:spring="http://www.springframework.org/schema/beans"
+			  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
 
 	<!--<bean id="myTestBean" class="org.springframework.beans.factory.xml.myTest.MyTestBean"/>-->
-	<bean class="org.springframework.beans.factory.xml.myTest.MyTestBean" />
-</beans>
+
+	<alias name="testConstruct" alias="aaa"/>
+
+	<spring:bean class="org.springframework.beans.factory.xml.myTest.MyTestBean" >
+		<spring:meta key="foo" value="bar"/>
+	</spring:bean>
+	<!--<spring:bean id="getBeanTest" class="org.springframework.beans.factory.xml.myTest.GetBeanTest">
+		<spring:lookup-method name="getBean" bean="student"/>
+	</spring:bean>-->
+	<!--<spring:bean id="testChangeMethod" class="org.springframework.beans.factory.xml.myTest.TestChangeMethod">
+		<spring:replaced-method name="changeMe" replacer="methodReplacer"/>
+	</spring:bean>-->
+	<spring:bean id="testConstruct" class="org.springframework.beans.factory.xml.myTest.TestConstruct" name="myalias">
+		<spring:constructor-arg index="0" >
+			<value>黄辉昂</value>
+		</spring:constructor-arg>
+		<spring:constructor-arg index="1">
+			<value>22</value>
+		</spring:constructor-arg>
+	</spring:bean>
+
+	<!--<spring:bean id="methodReplacer" class="org.springframework.beans.factory.xml.myTest.TestMethodReplacer"/>-->
+	<!--<spring:bean id="student" class="org.springframework.beans.factory.xml.myTest.Student"/>-->
+
+</spring:beans>
