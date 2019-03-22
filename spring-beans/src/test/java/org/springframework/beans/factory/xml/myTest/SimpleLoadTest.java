@@ -38,7 +38,7 @@ public class SimpleLoadTest {
 	@Test
 	public void testConstruct() {
 		BeanFactory beanFactory = new XmlBeanFactory(new ClassPathResource("beanFactoryTest.xml"));
-		TestConstruct getBeanTest = (TestConstruct) beanFactory.getBean("testConstruct");
+		TestConstruct getBeanTest = (TestConstruct) beanFactory.getBean("&testConstruct");
 		System.out.println(getBeanTest.toString());
 	}
 }

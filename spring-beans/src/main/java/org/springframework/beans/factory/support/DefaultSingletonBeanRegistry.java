@@ -70,16 +70,24 @@ import org.springframework.util.StringUtils;
  */
 public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements SingletonBeanRegistry {
 
-	/** Cache of singleton objects: bean name to bean instance. */
+	/** Cache of singleton objects: bean name to bean instance.
+	 *  单例对象的缓存，键值对：bean的名称：bean的实例
+	 *  用于保存 BeanName 和创建 bean 实例之间的关系，*/
 	private final Map<String, Object> singletonObjects = new ConcurrentHashMap<>(256);
 
-	/** Cache of singleton factories: bean name to ObjectFactory. */
+	/** Cache of singleton factories: bean name to ObjectFactory.
+	 *  单例工厂的缓存，键值对：bean的名称：该bean的工厂对象
+	 *  用于保存 BeanName 和创建 bean 的工厂之间的关系，*/
 	private final Map<String, ObjectFactory<?>> singletonFactories = new HashMap<>(16);
 
-	/** Cache of early singleton objects: bean name to bean instance. */
+	/** Cache of early singleton objects: bean name to bean instance.
+	 * 早期的单例对象的缓存，键值对：bean的名称：bean的实例
+	 * 也是保存 BeanName 和创建 bean 实例之间的关系，与singletonObjects 的不同之处在于，
+	 * 当一个单例bean被放到这里面后，那么当bean还在创建的过程中，就可以通过getBean方法获取到了，其目的是为了检测循环引用*/
 	private final Map<String, Object> earlySingletonObjects = new HashMap<>(16);
 
-	/** Set of registered singletons, containing the bean names in registration order. */
+	/** Set of registered singletons, containing the bean names in registration order.
+	 * 用来保存当前所有已经注册的 bean */
 	private final Set<String> registeredSingletons = new LinkedHashSet<>(256);
 
 	/** Names of beans that are currently in creation. */
@@ -158,13 +166,18 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 		}
 	}
 
+	/*
+	* Annotation: HZR
+	* */
 	@Override
 	@Nullable
 	public Object getSingleton(String beanName) {
+		//参数true设置表示允许早期依赖
 		return getSingleton(beanName, true);
 	}
 
 	/**
+	 * Annotation: HZR
 	 * Return the (raw) singleton object registered under the given name.
 	 * <p>Checks already instantiated singletons and also allows for an early
 	 * reference to a currently created singleton (resolving a circular reference).
@@ -174,14 +187,21 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 */
 	@Nullable
 	protected Object getSingleton(String beanName, boolean allowEarlyReference) {
+		//检查缓存中是否存在实例
 		Object singletonObject = this.singletonObjects.get(beanName);
+		//缓存不存在实例并且当前正在创建指定的单例bean
 		if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) {
+			//符合条件，锁定全局变量
 			synchronized (this.singletonObjects) {
+				//如果当前的bean正在加载则不进行处理
 				singletonObject = this.earlySingletonObjects.get(beanName);
 				if (singletonObject == null && allowEarlyReference) {
+					//当某些方法需要提前初始化的时候，则会调用addSingletonFactory方法将对应的ObjectFactory初始化策略存储在 singletonFactories
 					ObjectFactory<?> singletonFactory = this.singletonFactories.get(beanName);
 					if (singletonFactory != null) {
+						//调用预先设定的getObject方法
 						singletonObject = singletonFactory.getObject();
+						//记录在缓存中earlySingletonObjects和singletonFactories互斥
 						this.earlySingletonObjects.put(beanName, singletonObject);
 						this.singletonFactories.remove(beanName);
 					}
@@ -192,6 +212,8 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	}
 
 	/**
+	 * Annotation: HZR
+	 *
 	 * Return the (raw) singleton object registered under the given name,
 	 * creating and registering a new one if none registered yet.
 	 * @param beanName the name of the bean
@@ -201,8 +223,11 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 */
 	public Object getSingleton(String beanName, ObjectFactory<?> singletonFactory) {
 		Assert.notNull(beanName, "Bean name must not be null");
+		//全局变量需同步
 		synchronized (this.singletonObjects) {
+			//首先检查这个bean是否已经加载过，因为singleton模式就是复用已经创建的bean，所有这个步骤是必须的
 			Object singletonObject = this.singletonObjects.get(beanName);
+			//如果不曾加载过才可以进行singleton的bean初始化
 			if (singletonObject == null) {
 				if (this.singletonsCurrentlyInDestruction) {
 					throw new BeanCreationNotAllowedException(beanName,
